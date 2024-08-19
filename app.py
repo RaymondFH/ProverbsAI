@@ -12,11 +12,11 @@ def index():
     if request.method == 'POST':
         problem = request.form['problem']
         
-        # Call Claude API
+        # Call Claude API with the correct prompt format
         response = client.completions.create(
             model="claude-3-sonnet-20240229",
             max_tokens_to_sample=300,
-            prompt=f"Given the following personal problem: '{problem}', provide a relevant Bible verse, gospel passage, or other section from Catholic teachings that addresses this situation. Include the verse reference and a brief explanation of how it relates to the problem."
+            prompt=f"{anthropic.HUMAN_PROMPT} Given the following personal problem: '{problem}', provide a relevant Bible verse, gospel passage, or other section from Catholic teachings that addresses this situation. Include the verse reference and a brief explanation of how it relates to the problem.{anthropic.AI_PROMPT}",
         )
         
         return jsonify({'response': response.completion})
