@@ -1,25 +1,33 @@
 import os
 from flask import Flask, render_template, request, jsonify
-import anthropic
+from anthropic import Anthropic
 
 app = Flask(__name__)
 
 # Initialize the Anthropic client
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         problem = request.form['problem']
         
-        # Call Claude API with the correct prompt format
-        response = client.completions.create(
+        # Call Claude API using the Messages API
+        message = client.messages.create(
             model="claude-3-sonnet-20240229",
-            max_tokens_to_sample=300,
-            prompt=f"{anthropic.HUMAN_PROMPT} Given the following personal problem: '{problem}', provide a relevant Bible verse, gospel passage, or other section from Catholic teachings that addresses this situation. Include the verse reference and a brief explanation of how it relates to the problem.{anthropic.AI_PROMPT}",
+            max_tokens=300,
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"Given the following personal problem: '{problem}', provide a relevant Bible verse, gospel passage, or other section from Catholic teachings that addresses this situation. Include the verse reference and a brief explanation of how it relates to the problem."
+                }
+            ]
         )
         
-        return jsonify({'response': response.completion})
+        # Extract the response content
+        response_content = message.content[0].text
+        
+        return jsonify({'response': response_content})
     
     return render_template('index.html')
 
