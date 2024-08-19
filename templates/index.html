@@ -3,33 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>I have a problem</title>
+    <title>I Have a Problem</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1>I Have a Problem</h1>
-    </header>
-    
-    <main>
-        <div class="input-container">
-            <textarea id="problem-input" rows="4" placeholder="I have a problem, grant me wisdom..."></textarea>
-            <button onclick="getWisdom()">Seek Wisdom</button>
-            <div id="result"></div>
-        </div>
-    </main>
-    
-    <footer>
-        <h2>About</h2>
-        <p>Welcome to Scripture Wisdom. To use this site, simply enter your problem or concern in the text box above and click "Seek Wisdom". Our AI will provide you with a relevant Bible verse or passage to offer guidance and comfort.</p>
-    </footer>
+    <div class="container">
+        <header>
+            <h1>I Have a Problem</h1>
+        </header>
+        
+        <main>
+            <div class="input-container">
+                <textarea id="problem-input" rows="4" placeholder="Describe your problem here..."></textarea>
+                <button onclick="getWisdom()">Seek Wisdom</button>
+            </div>
+            <div id="result" class="result-container"></div>
+        </main>
+        
+        <footer>
+            <p>Share your problem, and receive guidance inspired by timeless wisdom.</p>
+        </footer>
+    </div>
 
     <script>
         function getWisdom() {
             const problem = document.getElementById('problem-input').value;
             const resultDiv = document.getElementById('result');
             
-            resultDiv.innerHTML = "Seeking wisdom...";
+            resultDiv.innerHTML = "<p class='loading'>Seeking wisdom...</p>";
             
             fetch('/', {
                 method: 'POST',
@@ -40,10 +42,10 @@
             })
             .then(response => response.json())
             .then(data => {
-                resultDiv.innerHTML = data.response;
+                resultDiv.innerHTML = `<p class='wisdom'>${data.response}</p>`;
             })
             .catch(error => {
-                resultDiv.innerHTML = "An error occurred. Please try again.";
+                resultDiv.innerHTML = "<p class='error'>An error occurred. Please try again.</p>";
                 console.error('Error:', error);
             });
         }
