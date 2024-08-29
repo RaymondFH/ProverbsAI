@@ -20,6 +20,7 @@
                 <button onclick="getWisdom()">Seek Wisdom</button>
             </div>
             <div id="result" class="result-container"></div>
+            <div id="bible-links" class="bible-links"></div>
         </main>
         
         <footer>
@@ -28,13 +29,10 @@
             
                 <p>Simply share your problem, and our AI will provide you with relevant Bible verses and spiritual insights tailored to your situation.</p>
             
-            
                 <p><strong>Remember:</strong> While our app offers valuable insights, it's designed to supplement, not replace, personal faith practices or professional counseling.</p>
-            
-    
             </section>
             <br>
-            <a href="https://www.paypal.com/donate/?hosted_button_id=J932GJKB4F4WJ">Donate to help pay for hosting</a>
+           <!-- <a href="https://www.paypal.com/donate/?hosted_button_id=J932GJKB4F4WJ">Donate to help pay for hosting</a>-->
         </footer>
     </div>
 
@@ -42,8 +40,10 @@
         function getWisdom() {
             const problem = document.getElementById('problem-input').value;
             const resultDiv = document.getElementById('result');
+            const bibleLinksDiv = document.getElementById('bible-links');
             
             resultDiv.innerHTML = "<p class='loading'>Seeking wisdom...</p>";
+            bibleLinksDiv.innerHTML = "";
             
             fetch('/', {
                 method: 'POST',
@@ -55,6 +55,13 @@
             .then(response => response.json())
             .then(data => {
                 resultDiv.innerHTML = `<p class='wisdom'>${data.response}</p>`;
+                
+                if (data.bible_links && Object.keys(data.bible_links).length > 0) {
+                    bibleLinksDiv.innerHTML = "<h3>Read in:</h3>";
+                    for (const [version, url] of Object.entries(data.bible_links)) {
+                        bibleLinksDiv.innerHTML += `<a href="${url}" target="_blank" class="bible-link">${version}</a>`;
+                    }
+                }
             })
             .catch(error => {
                 resultDiv.innerHTML = "<p class='error'>An error occurred. Please try again.</p>";

@@ -2,10 +2,16 @@ import os
 from flask import Flask, render_template, request, jsonify
 from anthropic import Anthropic
 
+# Import the BibleLinkGenerator
+from bible_link_generator import BibleLinkGenerator
+
 app = Flask(__name__)
 
 # Initialize the Anthropic client
 client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+# Initialize the BibleLinkGenerator
+link_generator = BibleLinkGenerator()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -27,7 +33,13 @@ def index():
         # Extract the response content
         response_content = message.content[0].text
         
-        return jsonify({'response': response_content})
+        # Generate Bible links
+        bible_links = link_generator.process_ai_response(response_content)
+        
+        return jsonify({
+            'response': response_content,
+            'bible_links': bible_links
+        })
     
     return render_template('index.html')
 
