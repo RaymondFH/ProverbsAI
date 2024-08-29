@@ -1,9 +1,7 @@
 import os
 from flask import Flask, render_template, request, jsonify
 from anthropic import Anthropic
-
-# Import the BibleLinkGenerator
-from bible_link_generator import BibleLinkGenerator
+from bible_link_generator import BibleLinkGenerator  # Updated import
 
 app = Flask(__name__)
 
